@@ -20,7 +20,6 @@ instrument_sounds = {
     'K': "instruments/kick.wav",
 }
 
-
 class BeatCell(Widget):
     def __init__(self, **kwargs):
         super(BeatCell, self).__init__(**kwargs)
@@ -64,26 +63,30 @@ class MyApp(App):
 
     def create_buttons(self):
         button_layout = BoxLayout(orientation='horizontal', size_hint=(1, None), height=100)
+        kds_label = Label(text="KDS", size_hint_x=None, width=80)
         start_button = Button(text='Start', on_release=self.start_sound)
         stop_button = Button(text='Stop', on_release=self.stop_sound)
+        button_layout.add_widget(kds_label)
         button_layout.add_widget(start_button)
         button_layout.add_widget(stop_button)
         self.layout.add_widget(button_layout)
         self.instrument_labels = ['K', 'S', 'H']
         self.instrument_buttons = []
-        
-        self.grid_layout = GridLayout(cols=17, spacing=5)  # Adjusted column count
-        
+        self.grid_layout = GridLayout(cols=17, spacing=5)
+
         color_map = {
-            'K': [0, 1, 0, 1],  # green in rgba
-            'S': [0, 1, 1, 1],  # cyan in rgba
-            'H': [0, 0, 1, 1]   # blue in rgba
+            'K': [0, 1, 0, 1],
+            'S': [0, 1, 1, 1],
+            'H': [0, 0, 1, 1]
         }
+
+        # Placeholder widget for alignment with the beat row's "Beat" label
+        # This should be outside the loop
+        # placeholder = Widget(size_hint_x=None, width=80)
+        # self.grid_layout.add_widget(placeholder)
 
         for instrument_label in self.instrument_labels:
             instrument_buttons_row = []
-            
-            # Create and add the label
             instrument_name = ''
             if instrument_label == 'K':
                 instrument_name = 'Kick'
@@ -91,16 +94,17 @@ class MyApp(App):
                 instrument_name = 'Snare'
             elif instrument_label == 'H':
                 instrument_name = 'Hat'
-            
+
             label = Label(text=instrument_name, size_hint_x=None, width=80)
             self.grid_layout.add_widget(label)
-            
+
             for _ in range(16):
                 button = ToggleButton(background_color=color_map[instrument_label], group=None)
                 instrument_buttons_row.append(button)
                 self.grid_layout.add_widget(button)
             self.instrument_buttons.append(instrument_buttons_row)
         self.layout.add_widget(self.grid_layout)
+
 
 
     def create_beat_row(self):
@@ -119,7 +123,7 @@ class MyApp(App):
         self.bpm_label.text = f"{int(value)} BPM"
 
     def create_slider(self):
-        slider_layout = BoxLayout(orientation='horizontal', size_hint=(1, None), height=50)
+        slider_layout = BoxLayout(orientation='horizontal', size_hint=(1, None), height=150,padding=50)
         self.slider = Slider(min=40, max=200, value=120)
         self.slider.bind(value=self.update_bpm_label)
         self.bpm_label = Label(text=f"{int(self.slider.value)} BPM", size_hint_x=None, width=100)
@@ -168,8 +172,6 @@ class MyApp(App):
         self.current_beat = (self.current_beat + 1) % 16
         interval = 30.0 / self.slider.value
         Clock.schedule_once(self.schedule_beat_highlight, interval)
-
-
 
 if __name__ == '__main__':
     MyApp().run()
