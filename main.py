@@ -136,7 +136,8 @@ class MyApp(App):
         self.playing = False
         # Reset all beat highlights
         for cell in self.beat_row.children:
-            cell.reset()
+            if isinstance(cell, BeatCell):
+                cell.reset()
 
     def play_sound(self, sound):
         sound.play()
