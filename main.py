@@ -20,6 +20,11 @@ instrument_sounds = {
     'K': "instruments/kick.wav",
 }
 
+instrument_info = {
+    'K': {'name': 'Kick', 'color': [0, 1, 0, 1]},
+    'S': {'name': 'Snare', 'color': [0, 1, 1, 1]},
+    'H': {'name': 'Hat', 'color': [0, 0, 1, 1]}
+}
 class BeatCell(Widget):
     def __init__(self, **kwargs):
         super(BeatCell, self).__init__(**kwargs)
@@ -45,14 +50,8 @@ class MyApp(App):
     def __init__(self, **kwargs):
         super(MyApp, self).__init__(**kwargs)
         self.executor = ThreadPoolExecutor(max_workers=3)  # 3 instruments
-        # Preload all sounds
-        self.sounds = {}
-        for label, path in instrument_sounds.items():
-            sound = SoundLoader.load(path)
-            if not sound:
-                print(f"Failed to load sound from {path}")
-            else:
-                self.sounds[label] = sound
+        self.sounds = {label: SoundLoader.load(path) for label, path in instrument_sounds.items()}
+
 
     def build(self):
         self.layout = BoxLayout(orientation='vertical')
@@ -73,36 +72,18 @@ class MyApp(App):
         self.instrument_labels = ['K', 'S', 'H']
         self.instrument_buttons = []
         self.grid_layout = GridLayout(cols=17, spacing=5)
+        self.instrument_buttons = []
 
-        color_map = {
-            'K': [0, 1, 0, 1],
-            'S': [0, 1, 1, 1],
-            'H': [0, 0, 1, 1]
-        }
-
-        # Placeholder widget for alignment with the beat row's "Beat" label
-        # This should be outside the loop
-        # placeholder = Widget(size_hint_x=None, width=80)
-        # self.grid_layout.add_widget(placeholder)
-
-        for instrument_label in self.instrument_labels:
-            instrument_buttons_row = []
-            instrument_name = ''
-            if instrument_label == 'K':
-                instrument_name = 'Kick'
-            elif instrument_label == 'S':
-                instrument_name = 'Snare'
-            elif instrument_label == 'H':
-                instrument_name = 'Hat'
-
-            label = Label(text=instrument_name, size_hint_x=None, width=80)
+        for instrument_label, info in instrument_info.items():
+            label = Label(text=info['name'], size_hint_x=None, width=80)
             self.grid_layout.add_widget(label)
-
-            for _ in range(16):
-                button = ToggleButton(background_color=color_map[instrument_label], group=None)
-                instrument_buttons_row.append(button)
+            instrument_buttons_row = [
+                ToggleButton(background_color=info['color'], group=None) for _ in range(16)
+            ]
+            for button in instrument_buttons_row:
                 self.grid_layout.add_widget(button)
             self.instrument_buttons.append(instrument_buttons_row)
+
         self.layout.add_widget(self.grid_layout)
 
 
@@ -144,7 +125,8 @@ class MyApp(App):
                 cell.reset()
 
     def play_sound(self, sound):
-        sound.play()
+        if sound:
+            sound.play()
 
     def schedule_beat_highlight(self, dt=0):
         # If the playing flag is set to False, exit the function
