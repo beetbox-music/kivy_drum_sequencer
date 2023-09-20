@@ -1,6 +1,8 @@
 # Drum Sequencer App
 A simple drum sequencer app built with Kivy. Create beats with kick, snare, and hi-hat sounds, and play them back at a desired BPM.
 
+![screenshot](Screenshot.png)
+
 ## Features
 - Three instrument tracks: Kick (K), Snare (S), and Hi-hat (H).
 - Sixteen steps per instrument track.
