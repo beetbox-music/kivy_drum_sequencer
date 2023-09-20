@@ -71,7 +71,8 @@ class MyApp(App):
         self.layout.add_widget(button_layout)
         self.instrument_labels = ['K', 'S', 'H']
         self.instrument_buttons = []
-        self.grid_layout = GridLayout(cols=16, spacing=5)
+        
+        self.grid_layout = GridLayout(cols=17, spacing=5)  # Adjusted column count
         
         color_map = {
             'K': [0, 1, 0, 1],  # green in rgba
@@ -81,6 +82,19 @@ class MyApp(App):
 
         for instrument_label in self.instrument_labels:
             instrument_buttons_row = []
+            
+            # Create and add the label
+            instrument_name = ''
+            if instrument_label == 'K':
+                instrument_name = 'Kick'
+            elif instrument_label == 'S':
+                instrument_name = 'Snare'
+            elif instrument_label == 'H':
+                instrument_name = 'Hat'
+            
+            label = Label(text=instrument_name, size_hint_x=None, width=80)
+            self.grid_layout.add_widget(label)
+            
             for _ in range(16):
                 button = ToggleButton(background_color=color_map[instrument_label], group=None)
                 instrument_buttons_row.append(button)
@@ -90,7 +104,12 @@ class MyApp(App):
 
 
     def create_beat_row(self):
-        self.beat_row = GridLayout(cols=16, spacing=5, size_hint_y=0.15)
+        self.beat_row = GridLayout(cols=17, spacing=5, size_hint_y=0.15)  # Adjusted column count
+
+        # Add the "Beat" label
+        label = Label(text="Beat", size_hint_x=None, width=80)
+        self.beat_row.add_widget(label)
+
         for _ in range(16):
             cell = BeatCell()
             self.beat_row.add_widget(cell)
@@ -132,10 +151,12 @@ class MyApp(App):
             prev_beat = self.current_beat - 1
         else:
             prev_beat = 15
-        self.beat_row.children[-(prev_beat + 1)].reset()
+        if isinstance(self.beat_row.children[-(prev_beat + 1)], BeatCell):
+            self.beat_row.children[-(prev_beat + 1)].reset()
 
         # Highlight current beat
-        self.beat_row.children[-(self.current_beat + 1)].highlight()
+        if isinstance(self.beat_row.children[-(self.current_beat + 1)], BeatCell):
+            self.beat_row.children[-(self.current_beat + 1)].highlight()
 
         # Play sounds for the current beat
         for idx, instrument_label in enumerate(self.instrument_labels):
@@ -146,6 +167,7 @@ class MyApp(App):
         self.current_beat = (self.current_beat + 1) % 16
         interval = 30.0 / self.slider.value
         Clock.schedule_once(self.schedule_beat_highlight, interval)
+
 
 
 if __name__ == '__main__':
