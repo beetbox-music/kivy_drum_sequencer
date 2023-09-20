@@ -1,4 +1,4 @@
-# Drum Sequencer App
+# Kivy Drum Sequencer
 A simple drum sequencer app built with Kivy. Create beats with kick, snare, and hi-hat sounds, and play them back at a desired BPM.
 
 ![screenshot](Screenshot.png)
