@@ -29,8 +29,12 @@ The app utilizes .wav sound files for the kick, snare, and hi-hat. Ensure these 
 - instruments/snare.wav
 - instruments/kick.wav
 
+## Limitations
+- At the moment, the app struggles to stay on tempo
+
 ## Future Enhancements
 - Add more instruments and sound samples.
+- Volume controls for each instrument.
 - Save and load beat patterns.
 - Implement advanced playback controls such as pause and rewind.
 
